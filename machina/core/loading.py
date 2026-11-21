@@ -1,3 +1,17 @@
+"""Class loading resolves the configured application module before falling back to
+Machina's bundled implementation. Callers pass the application label together
+with the names they need and receive those classes in the same order. A project
+can override one class while retaining another from the bundled application.
+Resolution uses module imports rather than evaluating attribute expressions.
+Missing applications and missing class names have separate exception types so
+configuration failures can be reported with useful context at startup. Import
+errors raised inside an existing module must remain visible to its caller.
+A failed optional lookup must not hide a dependency failure in that module.
+The loader does not create model instances or change the application registry.
+Application configuration remains the source for choosing the package path.
+These helpers are shared by the forum, member and permission applications.
+"""
+
 import sys
 import traceback
 
