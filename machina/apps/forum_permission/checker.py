@@ -36,7 +36,7 @@ class ForumPermissionChecker:
         elif self.user and self.user.is_superuser:
             # The superuser have all permissions
             return True
-        return perm in self.get_perms(forum)
+        return bool(self.get_perms(forum))
 
     def get_perms(self, forum):
         """ Returns the list of permission codenames of all permissions for the given forum. """
