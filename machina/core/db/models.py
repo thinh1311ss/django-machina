@@ -1,3 +1,17 @@
+"""Model lookup delegates to Django's application registry whenever it is ready.
+During application population, the registry may know an application before its
+models have been imported. In that narrow window, lookup imports the configured
+models module and then requests the registered model with the original labels.
+This preserves the application's configured package and model identity instead
+of importing a class from an assumed module path. An application that replaces
+its model definitions can therefore participate in the same lookup sequence.
+Calls made before applications are ready still surface the registry exception.
+The lookup helpers do not initialize Django or retry application population.
+They do not create database connections, execute queries or instantiate models.
+Code that needs an instance should resolve its model first and use its manager.
+The availability check uses the same application and model labels as lookup.
+"""
+
 from importlib import import_module
 
 from django.apps import apps
