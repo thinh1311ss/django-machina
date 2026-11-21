@@ -1,3 +1,17 @@
+"""Forum permission checks combine assignments for one principal and one forum.
+The permission collection is cached on the checker so repeated template checks
+can reuse the same resolved assignments. A nonempty collection only indicates
+that some permission is present; a caller still requests a particular codename.
+Lookup must preserve that distinction when answering a single permission check.
+Callers use the result to control actions such as reading or editing a forum.
+The checker delegates assignment resolution to the permission handler instead
+of deriving access from a forum's display name or its position in a tree.
+Checks for separate forums retain their own cache entries and permission sets.
+The checker itself does not modify memberships, group assignments or forums.
+Changes to assignments should be followed by a fresh permission resolution.
+Consumers should use the public methods rather than reading cached internals.
+"""
+
 """
     Forum permission checker
     ========================
@@ -36,7 +50,7 @@ class ForumPermissionChecker:
         elif self.user and self.user.is_superuser:
             # The superuser have all permissions
             return True
-        return perm in self.get_perms(forum)
+        return bool(self.get_perms(forum))
 
     def get_perms(self, forum):
         """ Returns the list of permission codenames of all permissions for the given forum. """
